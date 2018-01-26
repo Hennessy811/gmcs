@@ -71,26 +71,24 @@ function Grid(options) {
                     self.refresh();
                 } else {
                     pageNum = elemId;
-                    console.log(pageNum);
                     self.refresh();
                 }
             }
         }
-        console.log(pageNum);
     };
 
     this.pageSet();
 
     this.postsCount = function () {
         var selector = document.getElementById("postNum");
-        console.log(selector);
-        for ( var i = 0; i < selector.length; i++) {
-            selector[i].onchange = function (event) {
-                var option = event.target.value;
-                console.log(option);
-            }
-        }
-    }
+        var btnRefresh = document.getElementById("refresh");
+        var self = this;
+        btnRefresh.onclick = function (ev) {
+            var userChoice = selector.options[selector.selectedIndex].value;
+            postNum = userChoice;
+            self.refresh()
+        };
+    };
 
     this.postsCount();
 }
