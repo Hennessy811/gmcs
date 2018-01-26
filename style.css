@@ -3,5 +3,23 @@ table th {
 }
 
 .pagination {
-    text-align: center;
+    /*text-align: center;*/
+    margin: auto;
+}
+
+.pagination a {
+    margin: 10px 5px;
+    padding: 10px 15px;
+    border: 1px solid black;
+}
+
+.bottom-nav {
+    margin-top: 10px;
+    margin-bottom: 50px;
+    display: flex;
+    align-items: center;
+    /*justify-content: s;*/
+}
+.postVisible {
+    display: grid;
 }

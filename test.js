@@ -6,9 +6,8 @@ postNum = String(postNum[postNum.length - 1]);
 var pageNum = url.split("/");
 pageNum = String(Number(pageNum[pageNum.length - 2]) + 1);
 
-var url = url.split("/");
+url = url.split("/");
 url = url.slice(0, url.length - 2).join("/");
-console.log(url);
 
 function Grid(options) {
     this.options = options || {};
@@ -55,11 +54,45 @@ function Grid(options) {
         });
     };
 
-    this.setPage = function () {
+    this.refresh();
 
+    this.pageSet = function () {
+        var btn = document.getElementsByClassName('pages');
+        var self = this;
+        for ( var i = 0; i < btn.length; i++) {
+            btn[i].onclick = function (event) {
+                elemId = event.target.attributes.id.value;
+
+                if (elemId === "prev") {
+                    pageNum--;
+                    self.refresh();
+                } else if (elemId === "forv") {
+                    pageNum++;
+                    self.refresh();
+                } else {
+                    pageNum = elemId;
+                    console.log(pageNum);
+                    self.refresh();
+                }
+            }
+        }
+        console.log(pageNum);
     };
 
-    this.refresh();
+    this.pageSet();
+
+    this.postsCount = function () {
+        var selector = document.getElementById("postNum");
+        console.log(selector);
+        for ( var i = 0; i < selector.length; i++) {
+            selector[i].onchange = function (event) {
+                var option = event.target.value;
+                console.log(option);
+            }
+        }
+    }
+
+    this.postsCount();
 }
 
 var grid = new Grid({
@@ -94,7 +127,6 @@ var grid = new Grid({
         }
     ]
 });
-
 
 
 
