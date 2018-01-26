@@ -34,18 +34,29 @@ var table = document.getElementById('table-grid');
 
 class DataReciever {
 
+    // noinspection JSAnnotator
     constructor(url){
-        this.url = url
+        this.url = url;
+        this.getList;
+        this.renderList
     }
 
     getList() {
-        console.log(this.url)
+        // console.log(this.url)
+        $.getJSON(this.url, function(result) {
+            $.each(result, function(i, field){
+                return field
+            });
+        });
     }
 
+    renderList(place) {
+        console.log(this.getList())
+    }
 }
 
 var datum = new DataReciever(url);
 
-datum.getList();
+datum.renderList();
 
 // dataReciever.getList
