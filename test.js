@@ -1,32 +1,34 @@
+
+//--------------------FINISHED-----------------------------------------
 // Сократить URL
 // Внести PostNum и PageCount в класс в объект paginate
-// Рендерить навигацию
-// Ловить текущую страницу
+// Refresh без кнопки
+// Сделать список отображаемых страниц
+
+//--------------------WIP----------------------------------------------
+// 1. Рендерить список отображаемых страниц
+// ----------------------
+//
 // Переделать пагинацию
+// Ловить текущую страницу
+// Рендерить навигацию
+//---------------------------------------------------------------------
 
-var url = "http://10.40.10.118:81/Service1.svc/restapi/DefectDirectSql/0/0/0/0/0/-1/0/0/0/15";
-
-var postNum = url.split("/");
-postNum = String(postNum[postNum.length - 1]);
-
-var pageNum = url.split("/");
-pageNum = String(Number(pageNum[pageNum.length - 2]) + 1);
-
-url = url.split("/");
-url = url.slice(0, url.length - 2).join("/");
+var url = "http://10.40.10.118:81/Service1.svc/restapi/DefectDirectSql/0/0/0/0/0/-1/0/0/";
 
 function Grid(options) {
     this.options = options || {};
     this.total = 0;
     this.data = [];
 
-    this.paginate = function () {
-
-    };
+    this.pageNum = this.options.paginate.pageNum;
+    this.postNum = this.options.paginate.postNum;
 
 
     this.render = function () {
         this.options.$el.html('');
+
+        // Рендер заголовков
 
         var $table = $(document.createElement('table'));
         $table.addClass('table');
@@ -40,6 +42,8 @@ function Grid(options) {
         }
         $tr.appendTo($thead);
 
+        // Рендер содержимого
+
         var $tbody = $(document.createElement('tbody'));
 
         for(var j = 0; j < this.data.length; j++) {
@@ -52,16 +56,68 @@ function Grid(options) {
             $tr.appendTo($tbody);
         }
 
+        // Рендер навигации
+
         $thead.appendTo($table);
         $tbody.appendTo($table);
         $table.appendTo(this.options.$el);
     };
+    this.renderNav = function () {
+        var self = this;
+
+        var pageTotal = this.pageList;
+
+        var $navDiv = $(document.createElement('div'));
+        $navDiv.addClass('container bottom-nav');
+        var $paginateDiv = $(document.createElement('div'));
+        $paginateDiv.addClass('pagination');
+
+        console.log(pageTotal)
+
+    };
+
+    this.testpg = function(c, m) {
+            var delta = 2,
+                range = [],
+                rangeWithDots = [],
+                l;
+
+            range.push(1);
+            for (var i = c - delta; i <= c + delta; i++) {
+                if (i < m && i > 1) {
+                    range.push(i);
+                }
+            }
+            if (m != 1) range.push(m);
+
+            for (var i of range) {
+                if (l) {
+                    if (i - l === 2) {
+                        rangeWithDots.push(l + 1);
+                    } else if (i - l !== 1) {
+                        rangeWithDots.push('...');
+                    }
+                }
+                rangeWithDots.push(i);
+                l = i;
+            }
+
+            return rangeWithDots;
+        };
+
+
     this.refresh = function () {
         var self = this;
-        $.get(this.options.url + "/" + pageNum + "/" + postNum).then(function (result) {
+        $.get(this.options.url + "/" + this.pageNum + "/" + this.postNum)
+            .then(function (result) {
             self.total = result.total;
             self.data = result.defects;
             self.render();
+
+            var pageTotal = Math.ceil(self.total / self.postNum);
+            self.pageList = self.testpg(self.pageNum, pageTotal);
+
+            self.renderNav();
         });
     };
     this.refresh();
@@ -69,19 +125,26 @@ function Grid(options) {
     this.pageSet = function () {
         var btn = document.getElementsByClassName('pages');
         var self = this;
-        for ( var i = 0; i < btn.length; i++) {
-            btn[i].onclick = function (event) {
-                elemId = event.target.attributes.id.value;
+        var elemId;
+        for ( var k = 0; k < btn.length; k++) {
+            btn[k].onclick = function (event) {
+                if (event.target.attributes.id) {
+                    console.log(event.eventPhase);
+                    elemId = event.target.attributes.id.value;
+                    if (elemId === "prev") {
+                        self.pageNum--;
+                        self.refresh();
 
-                if (elemId === "prev") {
-                    pageNum--;
-                    self.refresh();
-                } else if (elemId === "forv") {
-                    pageNum++;
-                    self.refresh();
-                } else {
-                    pageNum = elemId;
-                    self.refresh();
+                    } else if (elemId === "forv") {
+                        console.log(event.eventPhase);
+                        self.pageNum++;
+                        self.refresh();
+
+                    } else {
+                        self.pageNum = Number(elemId);
+                        self.refresh();
+
+                    }
                 }
             }
         }
@@ -90,11 +153,9 @@ function Grid(options) {
 
     this.postsCount = function () {
         var selector = document.getElementById("postNum");
-        var btnRefresh = document.getElementById("refresh");
         var self = this;
-        btnRefresh.onclick = function (ev) {
-            var userChoice = selector.options[selector.selectedIndex].value;
-            postNum = userChoice;
+        selector.onchange = function (ev) {
+            self.postNum = Number(selector.options[selector.selectedIndex].value);
             self.refresh()
         };
     };
@@ -104,8 +165,10 @@ function Grid(options) {
 var grid = new Grid({
     url: url,
     $el: $('#grid'),
-    page: pageNum,
-    postCount: postNum,
+    paginate: {
+        pageNum: 1,
+        postNum: 15
+    },
     columns: [
         {
             name: 'Орг 1',
