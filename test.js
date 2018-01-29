@@ -14,6 +14,8 @@
 // Рендерить навигацию
 //---------------------------------------------------------------------
 
+// Параметры № 2,3,4
+
 var url = "http://10.40.10.118:81/Service1.svc/restapi/DefectDirectSql/0/0/0/0/0/-1/0/0/";
 
 function Grid(options) {
@@ -63,16 +65,47 @@ function Grid(options) {
         $table.appendTo(this.options.$el);
     };
     this.renderNav = function () {
-        var self = this;
+        var self = this,
+            $iconLeft = $(document.createElement('i')),
+            $iconRight = $(document.createElement('i')),
+            $moveLeft = $(document.createElement('a')),
+            $moveRight = $(document.createElement('a')),
+            $navDiv = $(document.createElement('div')),
+            $paginateDiv = $(document.createElement('div'));
 
-        var pageTotal = this.pageList;
+        $navDiv.attr('class', 'container bottom-nav');
+        $paginateDiv.attr('class', 'pagination');
+        $iconLeft.attr('class', 'fas fa-arrow-circle-left');
+        $iconRight.attr('class', 'fas fa-arrow-circle-right');
 
-        var $navDiv = $(document.createElement('div'));
-        $navDiv.addClass('container bottom-nav');
-        var $paginateDiv = $(document.createElement('div'));
-        $paginateDiv.addClass('pagination');
 
-        console.log(pageTotal)
+
+        $moveLeft.attr('class', 'pages');
+        $moveLeft.attr('href', '#');
+        $moveLeft.attr('id', 'prev');
+        $moveRight.attr('id', 'forv');
+        $moveRight.attr('class', 'pages');
+        $moveRight.attr('href', '#');
+
+
+        $moveLeft.appendTo($paginateDiv);
+        for ( var i = 0; i < this.pageList.length; i++) {
+            var $a = $(document.createElement('a'));
+            $a.attr('href', '#');
+            $a.attr('class', 'pages');
+            $a.attr('id', this.pageList[i]);
+            $a.text(this.pageList[i]);
+            $a.appendTo($paginateDiv);
+        }
+        $moveRight.appendTo($paginateDiv);
+        $paginateDiv.appendTo($navDiv);
+        $navDiv.appendTo(this.options.$el);
+        $iconLeft.appendTo($moveLeft);
+        $iconRight.appendTo($moveRight);
+
+
+
+
 
     };
 
@@ -118,38 +151,37 @@ function Grid(options) {
             self.pageList = self.testpg(self.pageNum, pageTotal);
 
             self.renderNav();
-        });
+            self.pageSet();
+
+            });
     };
     this.refresh();
 
     this.pageSet = function () {
-        var btn = document.getElementsByClassName('pages');
         var self = this;
         var elemId;
-        for ( var k = 0; k < btn.length; k++) {
-            btn[k].onclick = function (event) {
-                if (event.target.attributes.id) {
+        // this.options.$el.find('.pages').click(function (e) {
+        //     console.log($(e.currentTarget).attr('id'));
+        // })
+        this.options.$el.find('.pages').click(function (e) {
+            if ($(e.currentTarget).attr('id')) {
+                elemId = $(e.currentTarget).attr('id');
+                if (elemId === "prev") {
+                    self.pageNum--;
+                    self.refresh();
+
+                } else if (elemId === "forv") {
                     console.log(event.eventPhase);
-                    elemId = event.target.attributes.id.value;
-                    if (elemId === "prev") {
-                        self.pageNum--;
-                        self.refresh();
+                    self.pageNum++;
+                    self.refresh();
 
-                    } else if (elemId === "forv") {
-                        console.log(event.eventPhase);
-                        self.pageNum++;
-                        self.refresh();
-
-                    } else {
-                        self.pageNum = Number(elemId);
-                        self.refresh();
-
-                    }
+                } else {
+                    self.pageNum = Number(elemId);
+                    self.refresh();
                 }
             }
-        }
+        })
     };
-    this.pageSet();
 
     this.postsCount = function () {
         var selector = document.getElementById("postNum");
