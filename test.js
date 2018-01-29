@@ -4,13 +4,12 @@
 // Внести PostNum и PageCount в класс в объект paginate
 // Refresh без кнопки
 // Сделать список отображаемых страниц
-
+// Рендерить список отображаемых страниц
+// Рендер select на postnum
 //--------------------WIP----------------------------------------------
-// 1. Рендерить список отображаемых страниц
+// Фильтр по органзациям
 // ----------------------
 //
-// Переделать пагинацию
-// Ловить текущую страницу
 // Рендерить навигацию
 //---------------------------------------------------------------------
 
@@ -23,9 +22,25 @@ function Grid(options) {
     this.total = 0;
     this.data = [];
 
+    // PageNum - current page number
+    // PostNum - current number of displayed posts
     this.pageNum = this.options.paginate.pageNum;
     this.postNum = this.options.paginate.postNum;
 
+    this.renderFilter = function () {
+        var $filterDiv = $(document.createElement('div')),
+            $select_1 = $(document.createElement('select')),
+            $select_2 = $(document.createElement('select')),
+            $select_3 = $(document.createElement('select')),
+            digits = [];
+
+        for ( var i = 0; i < 20; i++) {
+
+        }
+
+
+
+    };
 
     this.render = function () {
         this.options.$el.html('');
@@ -70,16 +85,24 @@ function Grid(options) {
             $iconRight = $(document.createElement('i')),
             $moveLeft = $(document.createElement('a')),
             $moveRight = $(document.createElement('a')),
+            $p = $(document.createElement('p')),
+            $visiblePosts = $(document.createElement('div')),
+            $selectPosts = $(document.createElement('select')),
             $navDiv = $(document.createElement('div')),
             $paginateDiv = $(document.createElement('div'));
 
+        $visiblePosts.attr('class', 'postVisible');
+        $selectPosts.attr('id', 'postNum');
+        $selectPosts.attr('name', 'postVis');
+        $p.text('Записей на странице: ');
+
+        // Create Left/right navigation buttons
         $navDiv.attr('class', 'container bottom-nav');
         $paginateDiv.attr('class', 'pagination');
         $iconLeft.attr('class', 'fas fa-arrow-circle-left');
         $iconRight.attr('class', 'fas fa-arrow-circle-right');
 
-
-
+        // Set attributes to left/right navigations
         $moveLeft.attr('class', 'pages');
         $moveLeft.attr('href', '#');
         $moveLeft.attr('id', 'prev');
@@ -87,7 +110,7 @@ function Grid(options) {
         $moveRight.attr('class', 'pages');
         $moveRight.attr('href', '#');
 
-
+        // Render elements of navigation menu
         $moveLeft.appendTo($paginateDiv);
         for ( var i = 0; i < this.pageList.length; i++) {
             var $a = $(document.createElement('a'));
@@ -103,12 +126,23 @@ function Grid(options) {
         $iconLeft.appendTo($moveLeft);
         $iconRight.appendTo($moveRight);
 
+        // Render select area
+        $p.appendTo($visiblePosts);
+        $visiblePosts.appendTo($navDiv);
 
+        for ( var i = 0; i < 5; i++) {
+            var num = ["", 5, 15, 30, 50, 100];
+            var $option = $(document.createElement('option'));
+            $option.attr('value', num[i]);
+            $option.text(num[i]);
+            $option.appendTo($selectPosts)
+        }
 
-
+        $selectPosts.appendTo($visiblePosts);
 
     };
 
+    // This function makes 'smart' pagination
     this.testpg = function(c, m) {
             var delta = 2,
                 range = [],
@@ -138,7 +172,6 @@ function Grid(options) {
             return rangeWithDots;
         };
 
-
     this.refresh = function () {
         var self = this;
         $.get(this.options.url + "/" + this.pageNum + "/" + this.postNum)
@@ -152,17 +185,18 @@ function Grid(options) {
 
             self.renderNav();
             self.pageSet();
+            self.postsCount();
+            self.renderFilter();
 
             });
     };
     this.refresh();
 
+    // Cet current page
     this.pageSet = function () {
         var self = this;
         var elemId;
-        // this.options.$el.find('.pages').click(function (e) {
-        //     console.log($(e.currentTarget).attr('id'));
-        // })
+
         this.options.$el.find('.pages').click(function (e) {
             if ($(e.currentTarget).attr('id')) {
                 elemId = $(e.currentTarget).attr('id');
@@ -183,6 +217,7 @@ function Grid(options) {
         })
     };
 
+    // Set current number of displayed posts
     this.postsCount = function () {
         var selector = document.getElementById("postNum");
         var self = this;
@@ -191,7 +226,6 @@ function Grid(options) {
             self.refresh()
         };
     };
-    this.postsCount();
 }
 
 var grid = new Grid({
@@ -228,28 +262,3 @@ var grid = new Grid({
         }
     ]
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
