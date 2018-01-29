@@ -34,11 +34,26 @@ function Grid(options) {
             $select_3 = $(document.createElement('select')),
             digits = [];
 
-        for ( var i = 0; i < 20; i++) {
-
+        for ( var i = 1; i < 21; i++) {
+            var digit = '0';
+            if (i < 10) {
+                digit += i;
+            } else {
+                digit = i;
+            }
+            digits.push(Number(digit))
         }
 
+        // console.log(digits)
 
+        for ( var i = 0; i < digits.length; i++) {
+            var $option = $(document.createElement('option'));
+            $option.attr('value', digits[i]);
+            $option.text(digits[i]);
+            $option.appendTo($select_1)
+        }
+
+        // ПРОДОЛЖАТЬ ОТСЮДА :)
 
     };
 
