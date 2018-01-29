@@ -1,3 +1,9 @@
+// Сократить URL
+// Внести PostNum и PageCount в класс в объект paginate
+// Рендерить навигацию
+// Ловить текущую страницу
+// Переделать пагинацию
+
 var url = "http://10.40.10.118:81/Service1.svc/restapi/DefectDirectSql/0/0/0/0/0/-1/0/0/0/15";
 
 var postNum = url.split("/");
@@ -13,6 +19,12 @@ function Grid(options) {
     this.options = options || {};
     this.total = 0;
     this.data = [];
+
+    this.paginate = function () {
+
+    };
+
+
     this.render = function () {
         this.options.$el.html('');
 
@@ -44,7 +56,6 @@ function Grid(options) {
         $tbody.appendTo($table);
         $table.appendTo(this.options.$el);
     };
-
     this.refresh = function () {
         var self = this;
         $.get(this.options.url + "/" + pageNum + "/" + postNum).then(function (result) {
@@ -53,7 +64,6 @@ function Grid(options) {
             self.render();
         });
     };
-
     this.refresh();
 
     this.pageSet = function () {
@@ -76,7 +86,6 @@ function Grid(options) {
             }
         }
     };
-
     this.pageSet();
 
     this.postsCount = function () {
@@ -89,7 +98,6 @@ function Grid(options) {
             self.refresh()
         };
     };
-
     this.postsCount();
 }
 
