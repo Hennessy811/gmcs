@@ -17,6 +17,8 @@
 
 var url = "http://10.40.10.118:81/Service1.svc/restapi/DefectDirectSql/0/0/0/0/0/-1/0/0/";
 
+// http://10.40.10.118:81/Service1.svc/restapi/DefectDirectSql/0/03/05/01/0/-1/0/0/1/15
+// http://10.40.10.118:81/Service1.svc/restapi/DefectDirectSql/0/03/05/01/0/-1/0/0/0/15
 function Grid(options) {
     this.options = options || {};
     this.total = 0;
@@ -29,10 +31,17 @@ function Grid(options) {
 
     this.renderFilter = function () {
         var $filterDiv = $(document.createElement('div')),
+            $el = this.options.$el,
             $select_1 = $(document.createElement('select')),
             $select_2 = $(document.createElement('select')),
             $select_3 = $(document.createElement('select')),
+            $btnReftresh = $(document.createElement('button')),
+            $btnReset = $(document.createElement('button')),
             digits = [];
+
+        $btnReftresh.text('Фильтровать');
+        $btnReset.text('Сбросить фильтр');
+        $filterDiv.attr('class', 'filterdiv');
 
         for ( var i = 1; i < 21; i++) {
             var digit = '0';
@@ -41,19 +50,67 @@ function Grid(options) {
             } else {
                 digit = i;
             }
-            digits.push(Number(digit))
+            digits.push(String(digit))
         }
-
-        // console.log(digits)
 
         for ( var i = 0; i < digits.length; i++) {
-            var $option = $(document.createElement('option'));
-            $option.attr('value', digits[i]);
-            $option.text(digits[i]);
-            $option.appendTo($select_1)
+            var $option1 = $(document.createElement('option'));
+            var $option2 = $(document.createElement('option'));
+            var $option3 = $(document.createElement('option'));
+
+            $option1.attr('value', digits[i]);
+            $option1.text(digits[i]);
+            $option1.appendTo($select_1);
+
+            $option2.attr('value', digits[i]);
+            $option2.text(digits[i]);
+            $option2.appendTo($select_2 );
+
+            $option3.attr('value', digits[i]);
+            $option3.text(digits[i]);
+            $option3.appendTo($select_3);
         }
 
-        // ПРОДОЛЖАТЬ ОТСЮДА :)
+        $el.append($filterDiv);
+        $select_1.appendTo($filterDiv);
+        $select_2.appendTo($filterDiv);
+        $select_3.appendTo($filterDiv);
+        $btnReftresh.appendTo($filterDiv);
+        $btnReset.appendTo($filterDiv);
+
+        var self = this;
+
+        $btnReftresh.click(function (event) {
+            var val_1 = $select_1["0"].value,
+                val_2 = $select_2["0"].value,
+                val_3 = $select_3["0"].value;
+
+            var workUrl = self.options.url;
+
+            workUrl = workUrl.split('/');
+
+            // Необходим 7,8,9 индекс в юрл
+
+            workUrl[7] = val_1;
+            workUrl[8] = val_2;
+            workUrl[9] = val_3;
+
+            self.options.url = workUrl.join('/');
+
+            self.refresh();
+        });
+
+        $btnReset.click(function (event) {
+            var defStr = self.options.url;
+            defStr = defStr.split('/');
+
+            defStr[7] = 0;
+            defStr[8] = 0;
+            defStr[9] = 0;
+
+            self.options.url = defStr.join('/');
+            self.refresh();
+        });
 
     };
 
@@ -189,25 +246,28 @@ function Grid(options) {
 
     this.refresh = function () {
         var self = this;
-        $.get(this.options.url + "/" + this.pageNum + "/" + this.postNum)
+        $.get(this.options.url + this.pageNum + "/" + this.postNum)
             .then(function (result) {
-            self.total = result.total;
-            self.data = result.defects;
-            self.render();
 
-            var pageTotal = Math.ceil(self.total / self.postNum);
-            self.pageList = self.testpg(self.pageNum, pageTotal);
+                // console.log(self.options.url + self.pageNum + "/" + self.postNum);
 
-            self.renderNav();
-            self.pageSet();
-            self.postsCount();
-            self.renderFilter();
+                self.total = result.total;
+                self.data = result.defects;
+                self.render();
+
+                var pageTotal = Math.ceil(self.total / self.postNum);
+                self.pageList = self.testpg(self.pageNum, pageTotal);
+
+                self.renderFilter();
+                self.renderNav();
+                self.pageSet();
+                self.postsCount();
 
             });
     };
     this.refresh();
 
-    // Cet current page
+    // Set current page
     this.pageSet = function () {
         var self = this;
         var elemId;
@@ -247,7 +307,7 @@ var grid = new Grid({
     url: url,
     $el: $('#grid'),
     paginate: {
-        pageNum: 1,
+        pageNum: 0,
         postNum: 15
     },
     columns: [
