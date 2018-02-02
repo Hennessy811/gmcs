@@ -1,0 +1,33 @@
+<div class="container elem">
+  <table class="table">
+    <tr>
+      <th *ngFor="let header of options.columns">{{header.name}}</th>
+    </tr>
+    <tr *ngFor="let items of gotData">
+      <td>{{ items.org1Description }}</td>
+      <td>{{ items.org2Description }}</td>
+      <td>{{ items.org3Description }}</td>
+      <td>{{ items.developmentReason }}</td>
+      <td>{{ items.itemDescription }}</td>
+      <td>{{ items.reasonDescription }}</td>
+    </tr>
+  </table>
+</div>
+
+<!--Вынести пагинатор в грид-->
+<!--Грид получает только options и результат getData()-->
+<!--Грид следит за изменением total в options и при изменени перерендерится-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+

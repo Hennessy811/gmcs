@@ -1,0 +1,14 @@
+<div class="bottom-nav container">
+  <div class="pagination">
+    <a id="prev" href="#" (click)="goToPage('prev')">Prev</a>
+    <a *ngFor="let page of pages" id="{{page}}" href="#" (click)="goToPage(page)">{{ page }}</a>
+    <a id="next" href="#" (click)="goToPage('next')">Next</a>
+  </div>
+
+  <div class="posts">
+    <label for="posts">Количество записей на странице: </label>
+    <select [(ngModel)]="options.paginate.postNum" (change)="this.requestData.emit($event)" #options.paginate.postNum="ngModel" name="posts" id="posts" >
+      <option *ngFor="let option of options.paginate.postOptions" value="{{option}}">{{option}}</option>
+    </select>
+  </div>
+</div>
