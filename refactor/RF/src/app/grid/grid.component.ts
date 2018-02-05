@@ -1,5 +1,4 @@
 import {Component, EventEmitter, Input, OnInit, Output, OnChanges, SimpleChanges} from '@angular/core';
-import { NgModel } from "@angular/forms";
 
 
 @Component({
