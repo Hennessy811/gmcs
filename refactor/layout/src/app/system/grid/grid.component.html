@@ -1,3 +1,21 @@
-<p>
-  grid works!
-</p>
+<div class="container">
+  <label for="1">Фильтр: </label>
+  <select [(ngModel)]="orgFilter[0]" name="filter" id="1" (change)="onAppliedFilter($event)">
+    <option *ngFor="let option of filterVals" value="{{option}}">{{option}}</option>
+  </select>
+  <select [(ngModel)]="orgFilter[1]" name="filter" id="2" (change)="onAppliedFilter($event)">
+    <option *ngFor="let option of filterVals" value="{{option}}">{{option}}</option>
+  </select>
+  <select [(ngModel)]="orgFilter[2]" name="filter" id="3" (change)="onAppliedFilter($event)">
+    <option *ngFor="let option of filterVals" value="{{option}}">{{option}}</option>
+  </select>
+</div>
+
+<app-grid-display
+  [gotData]="gotData"
+  [options]="options"
+></app-grid-display>
+<app-pagination
+  [options]="options"
+  (requestData)="requestData()"
+></app-pagination>

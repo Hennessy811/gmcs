@@ -36,6 +36,11 @@ export class LoginComponent implements OnInit {
             text: "Теперь вы можете войти в систему!",
             type: 'success'
           })
+        } else if (params['accessDenied']){
+          this.showMessage({
+            text: "Вы должны войти в систему!",
+            type: 'warning'
+          })
         }
       });
     this.form = new FormGroup({
